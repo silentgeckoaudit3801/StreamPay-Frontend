@@ -318,6 +318,32 @@ a:hover {
   padding: 0.5rem 0.75rem;
 }
 
+.status-badge-wrap {
+  display: inline-flex;
+  position: relative;
+}
+
+.status-badge {
+  cursor: pointer;
+}
+
+.status-badge-popover {
+  background: var(--panel-elevated);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-soft);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-start: 0;
+  line-height: 1.4;
+  max-width: min(18rem, 80vw);
+  min-width: 14rem;
+  padding: 0.75rem;
+  position: absolute;
+  z-index: 20;
+}
 .status-badge--draft {
   --status-badge-bg: var(--badge-draft-bg);
   --status-badge-border: var(--badge-draft-border);
