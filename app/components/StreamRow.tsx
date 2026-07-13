@@ -6,6 +6,7 @@ import { StreamProgress } from "./StreamProgress";
 import { MiniBurnDown } from "./MiniBurnDown";
 import { ErrorToast } from "./ErrorToast";
 import { fetchWithIdempotency } from "../../lib/apiClient";
+import { copyText } from "../lib/clipboard";
 import { isStreamPayError, formatErrorForDisplay } from "../lib/errors";
 import type { StreamPayError } from "../lib/errors";
 
@@ -37,6 +38,7 @@ export function StreamRow({ stream }: StreamRowProps) {
   const [errorMsg, setErrorMsg] = useState("");
   // Local notification state for polite screen reader announcements (#219)
   const [srAnnouncement, setSrAnnouncement] = useState("");
+  const [copyFeedback, setCopyFeedback] = useState("");
 
   // Ref hook to preserve active keyboard focus target parameters across button re-renders
   const actionButtonRef = useRef<HTMLButtonElement>(null);
@@ -100,6 +102,21 @@ export function StreamRow({ stream }: StreamRowProps) {
     }
   };
 
+  const handleCopyRecipient = async () => {
+    setCopyFeedback("");
+
+    try {
+      await copyText(stream.recipient);
+      const message = `Copied recipient ${stream.recipient}.`;
+      setCopyFeedback("Recipient copied.");
+      setSrAnnouncement(message);
+    } catch {
+      const message = "Could not copy recipient. Select the recipient address and copy it manually.";
+      setCopyFeedback(message);
+      setSrAnnouncement(message);
+    }
+  };
+
   return (
     <article className="stream-row" aria-labelledby={`${stream.id}-recipient`}>
       {/* Dynamic polite status messenger announcement node layer for assistive tech */}
@@ -109,10 +126,28 @@ export function StreamRow({ stream }: StreamRowProps) {
 
       <div className="stream-row__primary">
         <div>
-          <h2 className="stream-row__recipient" id={`${stream.id}-recipient`}>
-            {stream.recipient}
-          </h2>
+          <div className="stream-row__recipient-line">
+            <h2 className="stream-row__recipient" id={`${stream.id}-recipient`}>
+              {stream.recipient}
+            </h2>
+            <button
+              aria-label={`Copy recipient ${stream.recipient}`}
+              className="button button--secondary stream-row__copy"
+              onClick={handleCopyRecipient}
+              type="button"
+            >
+              Copy
+            </button>
+          </div>
           <p className="stream-row__schedule">{stream.schedule}</p>
+          {copyFeedback && (
+            <p
+              className="stream-row__copy-feedback"
+              role={copyFeedback === "Recipient copied." ? "status" : "alert"}
+            >
+              {copyFeedback}
+            </p>
+          )}
         </div>
         <StatusBadge status={stream.status} />
       </div>
