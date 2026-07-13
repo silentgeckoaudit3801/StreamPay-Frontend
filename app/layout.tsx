@@ -25,7 +25,16 @@ export default function RootLayout({
       <body>
         <ToastProvider>
           <SplashScreen />
-          {children}
+          <header className="sr-only">
+            <p>StreamPay</p>
+            <nav aria-label="Primary">
+              <a href="#main-content">Skip to main content</a>
+            </nav>
+          </header>
+          <main id="main-content">{children}</main>
+          <footer className="sr-only">
+            <p>StreamPay payment streaming dashboard</p>
+          </footer>
         </ToastProvider>
       </body>
     </html>
